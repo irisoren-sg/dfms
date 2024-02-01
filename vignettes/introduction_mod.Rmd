@@ -67,11 +67,14 @@ BM14_mod <- BM14_M_diff %>%
   fortify.zoo %>% dplyr::as_tibble() %>% 
   dplyr::mutate(sp500_mod = sp500, 
          sp500_mod = dplyr::if_else(mod(lubridate::month(
-           lubridate::ymd(Index)), 12) == 0, sp500_mod, NA))
+           lubridate::ymd(Index)), 12) == 0, sp500_mod, NA), 
+         sp500_mod = dplyr::if_else(as.character(Index) == "2008-12-31",
+                                    NA, sp500_mod))
+  
 #convert to xts
 BM14_mod <- xts(BM14_mod[,-1], order.by = as.POSIXct(BM14_mod[[1]]))
 
-plot(scale(BM14_M_diff), lwd = 1)
+#plot(scale(BM14_M_diff), lwd = 1)
 ```
 
 ## Determining the Structure of the Model
@@ -126,6 +129,7 @@ Apart from the model summary, the *dfm* methods `residuals()` and `fitted()` ret
 ```{r}
 plot(resid(model1, orig.format = TRUE))
 plot(fitted(model1, orig.format = TRUE))
+nowcast <- fitted(model1, orig.format = TRUE)
 ```
 
 
